@@ -54,7 +54,7 @@ On Windows, activate the environment with `.venv\Scripts\activate` instead.
 uvicorn main:app --reload
 ```
 
-The API runs at http://127.0.0.1:8000. Interactive docs are at http://127.0.0.1:8000/docs.
+The API interactive docs are at http://127.0.0.1:8000/docs.
 
 The data lives in memory and resets every time the server restarts.
 
