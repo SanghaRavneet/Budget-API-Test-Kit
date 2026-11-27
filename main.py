@@ -10,10 +10,10 @@ Then open http://127.0.0.1:8000/docs for interactive API docs.
 AI-assisted: this file was drafted with Claude and reviewed by the author.
 """
 
-from typing import Optional
+from typing import Literal, Optional
 
 from fastapi import FastAPI, HTTPException, Query
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 app = FastAPI(
     title="Mock Budget API",
@@ -24,13 +24,16 @@ app = FastAPI(
 
 # ---------- Data models ----------
 
+MONTH_PATTERN = r"^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-\d{4}$"
+
+
 class BudgetIn(BaseModel):
     """Fields a client sends when creating a budget line."""
-    entity: str      # e.g. "Canada", "US_East"
-    account: str     # e.g. "Revenue", "Salaries"
-    period: str      # e.g. "Jan-2027"
-    scenario: str    # e.g. "Budget", "Forecast", "Actual"
-    amount: float    # amount in dollars
+    entity: str = Field(min_length=1)                           # fixes #2
+    account: str = Field(min_length=1)
+    period: str = Field(pattern=MONTH_PATTERN)                  # fixes #3
+    scenario: Literal["Budget", "Forecast", "Actual"]           # fixes #4
+    amount: float = Field(ge=0)                                 # fixes #1
 
 
 class Budget(BudgetIn):
