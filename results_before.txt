@@ -1,0 +1,91 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.12.6, pytest-9.2.0, pluggy-1.7.0 -- /Users/ravneetsangha/budget-api-test-kit/.venv/bin/python
+cachedir: .pytest_cache
+rootdir: /Users/ravneetsangha/budget-api-test-kit
+plugins: anyio-4.16.0
+collecting ... collected 20 items
+
+test_api.py::test_health_returns_ok PASSED                               [  5%]
+test_api.py::test_list_budgets_returns_200_and_a_list PASSED             [ 10%]
+test_api.py::test_list_budgets_items_match_schema PASSED                 [ 15%]
+test_api.py::test_filter_by_entity_returns_only_that_entity PASSED       [ 20%]
+test_api.py::test_filter_by_scenario_returns_only_that_scenario PASSED   [ 25%]
+test_api.py::test_filter_with_no_matches_returns_empty_list PASSED       [ 30%]
+test_api.py::test_list_budgets_responds_quickly PASSED                   [ 35%]
+test_api.py::test_get_budget_by_id_returns_matching_record PASSED        [ 40%]
+test_api.py::test_get_nonexistent_budget_returns_404 PASSED              [ 45%]
+test_api.py::test_get_budget_with_non_numeric_id_returns_422 PASSED      [ 50%]
+test_api.py::test_create_budget_returns_201_and_echoes_fields PASSED     [ 55%]
+test_api.py::test_created_budget_can_be_retrieved PASSED                 [ 60%]
+test_api.py::test_create_budget_missing_field_returns_422 PASSED         [ 65%]
+test_api.py::test_create_budget_with_text_amount_returns_422 PASSED      [ 70%]
+test_api.py::test_create_budget_rejects_negative_amount FAILED           [ 75%]
+test_api.py::test_create_budget_rejects_empty_entity FAILED              [ 80%]
+test_api.py::test_create_budget_rejects_invalid_period FAILED            [ 85%]
+test_api.py::test_create_budget_rejects_unknown_scenario FAILED          [ 90%]
+test_api.py::test_delete_budget_returns_204_and_removes_record PASSED    [ 95%]
+test_api.py::test_delete_nonexistent_budget_returns_404 PASSED           [100%]
+
+=================================== FAILURES ===================================
+__________________ test_create_budget_rejects_negative_amount __________________
+
+    def test_create_budget_rejects_negative_amount():
+        response = requests.post(
+            f"{BASE_URL}/budgets", json=valid_payload(amount=-500.0), timeout=TIMEOUT
+        )
+>       assert response.status_code == 422, (
+            f"Negative amount was accepted with status {response.status_code}"
+        )
+E       AssertionError: Negative amount was accepted with status 201
+E       assert 201 == 422
+E        +  where 201 = <Response [201]>.status_code
+
+test_api.py:163: AssertionError
+___________________ test_create_budget_rejects_empty_entity ____________________
+
+    def test_create_budget_rejects_empty_entity():
+        response = requests.post(
+            f"{BASE_URL}/budgets", json=valid_payload(entity=""), timeout=TIMEOUT
+        )
+>       assert response.status_code == 422, (
+            f"Empty entity was accepted with status {response.status_code}"
+        )
+E       AssertionError: Empty entity was accepted with status 201
+E       assert 201 == 422
+E        +  where 201 = <Response [201]>.status_code
+
+test_api.py:172: AssertionError
+__________________ test_create_budget_rejects_invalid_period ___________________
+
+    def test_create_budget_rejects_invalid_period():
+        response = requests.post(
+            f"{BASE_URL}/budgets", json=valid_payload(period="banana"), timeout=TIMEOUT
+        )
+>       assert response.status_code == 422, (
+            f"Invalid period was accepted with status {response.status_code}"
+        )
+E       AssertionError: Invalid period was accepted with status 201
+E       assert 201 == 422
+E        +  where 201 = <Response [201]>.status_code
+
+test_api.py:181: AssertionError
+_________________ test_create_budget_rejects_unknown_scenario __________________
+
+    def test_create_budget_rejects_unknown_scenario():
+        response = requests.post(
+            f"{BASE_URL}/budgets", json=valid_payload(scenario="Fantasy"), timeout=TIMEOUT
+        )
+>       assert response.status_code == 422, (
+            f"Unknown scenario was accepted with status {response.status_code}"
+        )
+E       AssertionError: Unknown scenario was accepted with status 201
+E       assert 201 == 422
+E        +  where 201 = <Response [201]>.status_code
+
+test_api.py:190: AssertionError
+=========================== short test summary info ============================
+FAILED test_api.py::test_create_budget_rejects_negative_amount - AssertionErr...
+FAILED test_api.py::test_create_budget_rejects_empty_entity - AssertionError:...
+FAILED test_api.py::test_create_budget_rejects_invalid_period - AssertionErro...
+FAILED test_api.py::test_create_budget_rejects_unknown_scenario - AssertionEr...
+========================= 4 failed, 16 passed in 0.12s =========================
